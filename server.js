@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // SPDX-License-Identifier: AGPL-3.0-only
-// GEO Lite 本地服务：只监听本机 127.0.0.1，数据都存在 ./geo-data/
+// GEO Go 本地服务：只监听本机 127.0.0.1，数据都存在 ./geo-data/
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -165,7 +165,7 @@ http.createServer(async (req, res) => {
     send(res, 404, { error: 'not found' });
   } catch (e) { send(res, 500, { error: String(e.message || e) }); }
 }).listen(PORT, '127.0.0.1', () => {
-  console.log(`✓ GEO Lite 已启动  http://localhost:${PORT}`);
+  console.log(`✓ GEO Go 已启动  http://localhost:${PORT}`);
   console.log(`  数据目录 ${DATA}`);
   resumeAll();
 });

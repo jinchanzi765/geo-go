@@ -1,9 +1,9 @@
 {
-  "name": "geo-lite",
+  "name": "geo-go",
   "version": "0.1.0",
-  "description": "GEO Lite：问 AI、看信源、写稿、回查的最短闭环工具（本地运行）",
+  "description": "GEO Go：问 AI、看信源、写稿、回查的最短闭环工具（本地运行）",
   "type": "module",
-  "bin": { "geo-lite": "server.js" },
+  "bin": { "geo-go": "server.js" },
   "scripts": { "start": "node server.js" },
   "engines": { "node": ">=20" },
   "private": true
