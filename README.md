@@ -14,14 +14,17 @@ GEO Go 是一个本地运行的小工具，帮你看清 AI 怎么回答跟你品
 
 ## 启动
 
-```bash
-git clone https://github.com/jinchanzi765/geo-go.git
-# 国内访问慢可以用 Gitee：https://gitee.com/golden-treasured/geo-go.git
-cd geo-go
-node server.js          # 打开 http://localhost:3000
-```
+1. 先安装 Node.js（20 以上，去 https://nodejs.org 下载 LTS 版）。
+2. 下载本仓库：点页面上的「Code」→「Download ZIP」，解压。会用 git 的也可以：
+   ```bash
+   git clone https://github.com/jinchanzi765/geo-go.git
+   # 国内访问慢可以用 Gitee：https://gitee.com/golden-treasured/geo-go.git
+   ```
+3. 双击文件夹里的启动文件：Mac 用「双击启动-Mac.command」，Windows 用「双击启动-Windows.bat」。浏览器会自动打开 http://localhost:3000 。
+   Mac 第一次双击如果提示「无法验证开发者」：右键这个文件 →「打开」→ 再点「打开」。
+4. 第 1 步要填 AI 接口的 Key，怎么拿见 [怎么拿Key.md](怎么拿Key.md)。
 
-需要 Node 20 以上，不用安装任何依赖。数据存在 `./geo-data/` 目录里，这个目录不会进 git。
+不用安装任何依赖。数据存在工具文件夹里的 `geo-data/` 目录，不会上传到任何地方，也不会进 git。
 
 ## 支持哪些 AI
 
@@ -43,7 +46,7 @@ node server.js          # 打开 http://localhost:3000
 | 3 跑数 | 可用。并发 3，失败自动重试；欠费、未开通这类错误不重试，会直接报出来。服务重启后没跑完的轮次会接着跑 |
 | 4 诊断 | 可用。包括要不要做、分平台提及率和误差范围、竞品、信源表、被引用最多的文章、AI 给错的电话 |
 | 5 写稿 | 可用。仓库里只带一条示范提示词，你可以改成自己的 |
-| 6 发布 | 现在要手动发，再贴链接；第 3 天去百度搜标题，登记有没有被收录。一键推送到草稿箱还在做 |
+| 6 发布 | 用你自己的账号发，发完把链接贴回来；第 3 天去百度搜标题，登记有没有被收录。 |
 | 7 回查 | 可用 |
 
 ## 需要帮忙？

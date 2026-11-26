@@ -11,7 +11,7 @@ import { analyze } from './lib/analyze.js';
 import { writingRoutes } from './lib/writing.js';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
-const DATA = path.resolve(process.env.GEO_DATA || path.join(process.cwd(), 'geo-data'));
+const DATA = path.resolve(process.env.GEO_DATA || path.join(ROOT, 'geo-data'));
 const PORT = +process.env.PORT || 3000;
 fs.mkdirSync(path.join(DATA, 'projects'), { recursive: true });
 
@@ -164,6 +164,10 @@ http.createServer(async (req, res) => {
     }
     send(res, 404, { error: 'not found' });
   } catch (e) { send(res, 500, { error: String(e.message || e) }); }
+}).on('error', (e) => {
+  if (e.code === 'EADDRINUSE') console.error(`端口 ${PORT} 被占用了：可能已经开着一个 GEO Go，直接打开 http://localhost:${PORT} 就行。`);
+  else console.error(e);
+  process.exit(1);
 }).listen(PORT, '127.0.0.1', () => {
   console.log(`✓ GEO Go 已启动  http://localhost:${PORT}`);
   console.log(`  数据目录 ${DATA}`);

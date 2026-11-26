@@ -65,7 +65,7 @@ const main = (h) => { $('#main').innerHTML = h; };
 /* 1 接入 */
 async function s1() {
   S.cfg = await api('GET', '/api/config');
-  main(`<h2>1. 接入 AI 平台</h2><p class="lead">填你自己的接口 Key，至少接一个才能跑。Key 只存在本机 geo-data/config.json。</p>
+  main(`<h2>1. 接入 AI 平台</h2><p class="lead">填你自己的接口 Key，至少接一个才能跑。Key 只存在本机 geo-data/config.json。还没有 Key？看工具文件夹里的「怎么拿Key.md」。</p>
   <div class="grid2">${Object.entries(S.cfg).map(([id, p]) => `<div class="card"><h3>${p.name} ${p.status ? (p.status.ok ? '<span class="chip ok">已连通 · 联网有信源</span>' : '<span class="chip neg">未连通</span>') : '<span class="chip gray">未测试</span>'}</h3>
     <label class="field">${p.keyHint}<input id="k_${id}" type="password" placeholder="${esc(p.key || '粘贴 Key')}"></label>
     <label class="field" style="margin-top:8px">模型<input id="m_${id}" value="${esc(p.model)}"></label>
@@ -236,7 +236,7 @@ async function s6() {
   const w = await api('GET', '/api/writing?project=' + S.project.id);
   const ds = w.drafts.filter((d) => d.text);
   main(`<h2>6. 发布</h2><p class="lead">把稿子发到对应平台（自己的号、官网，或者找渠道发），发完把文章链接贴回来。第 3 天左右查一次收录：搜得到，AI 才可能引用。</p>
-  <div class="hint">这一版先手动发：复制正文去平台发。一键推到草稿箱下一版做。同一篇稿别在同一个平台用多个号原样发，容易被判搬运。</div>
+  <div class="hint">复制正文，用你自己的账号去平台发，发完把链接贴回来。同一篇稿别在同一个平台用多个号原样发，容易被判搬运。</div>
   ${ds.length ? `<div class="card"><div class="tbl"><table><tr><th>平台</th><th>稿件</th><th style="min-width:260px">发布链接</th><th>收录（第 3 天查）</th></tr>
   ${ds.map((d) => `<tr><td><b>${esc(d.platform)}</b></td><td>${esc(d.title || d.question)}<br><button class="sm ghost" style="margin-top:4px" onclick="navigator.clipboard.writeText(${esc(JSON.stringify(d.title + '\n\n' + d.text.split('\n').slice(1).join('\n').trim()))});this.textContent='已复制'">复制全文</button></td>
     <td><input id="u_${d.id}" value="${esc(d.url)}" placeholder="发完贴文章链接"><button class="sm" style="margin-top:4px" onclick="saveU('${d.id}')">保存链接</button>${d.publishedAt ? `<div class="small mute">登记于 ${new Date(d.publishedAt).toLocaleDateString()}</div>` : ''}</td>
