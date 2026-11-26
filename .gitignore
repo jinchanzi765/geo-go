@@ -1,0 +1,6 @@
+# 用户数据和 Key，永远不进仓库
+geo-data/
+.env
+*.key
+node_modules/
+.DS_Store

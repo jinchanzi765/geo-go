@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GEO Lite</title>
+<style>
+:root{--bg:#F3F5F9;--panel:#fff;--panel2:#F8FAFC;--ink:#172033;--ink2:#4A5568;--mute:#8491A5;--line:#E1E6EE;--accent:#2C5CE6;--accent2:#1F47BF;--accent-soft:#E7EDFD;--ok:#1C8F55;--ok-soft:#E3F4EA;--warn:#B86210;--warn-soft:#FCEFDF;--neg:#CC3D3D;--neg-soft:#FBE6E6;
+  --f:-apple-system,"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;--mono:ui-monospace,Menlo,monospace}
+@media (prefers-color-scheme:dark){:root{--bg:#0F1420;--panel:#171E2D;--panel2:#1C2435;--ink:#E6EBF4;--ink2:#B3BDCE;--mute:#7C889C;--line:#2A3448;--accent:#6F93FF;--accent2:#8DA9FF;--accent-soft:#1E2B4D;--ok:#4CC488;--ok-soft:#163626;--warn:#E8954A;--warn-soft:#3A2715;--neg:#F07575;--neg-soft:#3D1D1F;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.65 var(--f)}
+button{font:inherit;cursor:pointer;border:0;border-radius:7px;padding:7px 14px;background:var(--accent);color:#fff;font-weight:600}
+button:hover{background:var(--accent2)}button.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)}button.sm{padding:3px 10px;font-size:12px}button:disabled{opacity:.45;cursor:default}
+input,textarea,select{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:7px;padding:6px 10px;width:100%}
+textarea{min-height:120px;resize:vertical}
+.app{display:grid;grid-template-columns:220px minmax(0,1fr);min-height:100vh}
+.side{background:var(--panel);border-right:1px solid var(--line);padding:16px 8px;position:sticky;top:0;height:100vh}
+.brand{font-weight:700;font-size:16px;padding:0 10px 14px}
+.steps{list-style:none;margin:0;padding:0}
+.steps button{all:unset;box-sizing:border-box;display:flex;gap:10px;align-items:center;width:100%;padding:8px 10px;border-radius:8px;cursor:pointer;color:var(--ink2)}
+.steps button:hover{background:var(--panel2)}.steps .on button{background:var(--accent-soft);color:var(--ink);font-weight:600}
+.steps .n{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:12px;border:1.5px solid var(--line)}
+.steps .soon{opacity:.5}
+main{padding:22px 24px 80px;max-width:1100px}
+h2{margin:0 0 4px;font-size:20px}.lead{color:var(--ink2);margin:0 0 16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:16px 18px;margin-bottom:14px}
+.card h3{font-size:14px;margin:0 0 10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.field{display:grid;gap:4px;font-size:12px;color:var(--ink2)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.spacer{flex:1}
+.chip{display:inline-block;font-size:11px;font-weight:600;border-radius:20px;padding:1px 8px;white-space:nowrap}
+.chip.ok{background:var(--ok-soft);color:var(--ok)}.chip.warn{background:var(--warn-soft);color:var(--warn)}.chip.neg{background:var(--neg-soft);color:var(--neg)}.chip.gray{background:var(--panel2);color:var(--mute);border:1px solid var(--line)}
+.hint{font-size:12px;color:var(--ink2);background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin-bottom:14px}
+.mute{color:var(--mute)}.small{font-size:12px}.mono{font-family:var(--mono)}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:14px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:12px 14px}.kpi .l{font-size:12px;color:var(--mute)}.kpi .v{font-size:24px;font-weight:700}.kpi .h{font-size:11px;color:var(--mute)}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{color:var(--mute);font-weight:500;font-size:12px}
+.tbl{overflow-x:auto}
+.bar{display:grid;grid-template-columns:150px minmax(0,1fr) 46px;gap:10px;align-items:center;font-size:13px;margin:5px 0}
+.bar .tr{height:11px;background:var(--panel2);border:1px solid var(--line);border-radius:4px;overflow:hidden}.bar .f{height:100%;background:var(--accent)}.bar .f.mute{background:var(--mute)}
+.bar .p{text-align:right}
+.prog{height:8px;border-radius:4px;background:var(--panel2);border:1px solid var(--line);overflow:hidden;margin:8px 0}.prog div{height:100%;background:var(--accent);transition:width .3s}
+.ans{border:1px solid var(--line);border-radius:9px;padding:10px 12px;margin-top:8px;background:var(--panel2);font-size:13px;white-space:pre-wrap;max-height:260px;overflow:auto}
+.ans mark{background:var(--accent-soft);color:var(--accent);font-weight:600}
+a{color:var(--accent)}
+@media(max-width:860px){.app{grid-template-columns:1fr}.side{position:static;height:auto}.steps{display:flex;overflow-x:auto}.grid2,.grid3,.kpis{grid-template-columns:1fr 1fr}main{padding:16px}}
+</style></head><body>
+<div class="app">
+  <aside class="side"><div class="brand">GEO Lite</div><ul class="steps" id="steps"></ul>
+    <div class="small mute" style="padding:14px 10px">本机运行 · 数据和 Key 只存在你电脑上</div></aside>
+  <main id="main"></main>
+</div>
+<script>
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const pct = (x) => x == null ? '—' : Math.round(x * 100) + '%';
+const api = async (m, u, b) => { const r = await fetch(u, { method: m, headers: { 'Content-Type': 'application/json' }, body: b ? JSON.stringify(b) : undefined }); return r.json(); };
+const S = { step: 1, project: null, runId: null, cfg: {}, poll: null };
+const STEPS = ['接入 AI 平台', '建项目', '跑数', '诊断', '写稿', '发布', '回查'];
+const READY = 7;
+
+function nav() {
+  $('#steps').innerHTML = STEPS.map((t, i) => `<li class="${S.step === i + 1 ? 'on' : ''} ${i >= READY ? 'soon' : ''}"><button onclick="go(${i + 1})"><span class="n">${i + 1}</span>${t}${i >= READY ? ' <span class="small mute">（下一版）</span>' : ''}</button></li>`).join('');
+}
+function go(n) { S.step = n; clearInterval(S.poll); nav(); [null, s1, s2, s3, s4, s5, s6, s7][n](); scrollTo(0, 0); }
+const main = (h) => { $('#main').innerHTML = h; };
+
+/* 1 接入 */
+async function s1() {
+  S.cfg = await api('GET', '/api/config');
+  main(`<h2>1. 接入 AI 平台</h2><p class="lead">填你自己的接口 Key，至少接一个才能跑。Key 只存在本机 geo-data/config.json。</p>
+  <div class="grid2">${Object.entries(S.cfg).map(([id, p]) => `<div class="card"><h3>${p.name} ${p.status ? (p.status.ok ? '<span class="chip ok">已连通 · 联网有信源</span>' : '<span class="chip neg">未连通</span>') : '<span class="chip gray">未测试</span>'}</h3>
+    <label class="field">${p.keyHint}<input id="k_${id}" type="password" placeholder="${esc(p.key || '粘贴 Key')}"></label>
+    <label class="field" style="margin-top:8px">模型<input id="m_${id}" value="${esc(p.model)}"></label>
+    ${p.status && !p.status.ok ? `<div class="hint" style="margin:8px 0 0;color:var(--neg)">${esc(p.status.error)}</div>` : ''}
+    <div class="row" style="margin-top:10px"><button class="sm" onclick="saveKey('${id}')">保存并测试</button></div></div>`).join('')}</div>
+  <div class="hint">口径说明：这里跑出来的是「接口口径」，和手机 App 里问出来的会有差距。前后两轮用同一个口径比，才有意义。</div>
+  <div class="row"><span class="spacer"></span><button onclick="go(2)">下一步：建项目</button></div>`);
+}
+async function saveKey(id) {
+  await api('POST', '/api/config', { id, key: $('#k_' + id).value, model: $('#m_' + id).value });
+  main('<div class="card">测试中，会真的问一次 AI，大概 10~30 秒……</div>');
+  await api('POST', '/api/config/test', { id }); s1();
+}
+
+/* 2 建项目 */
+async function s2() {
+  const ps = await api('GET', '/api/projects');
+  if (!S.project && ps.length) S.project = ps[0];
+  const p = S.project || { brand: '', aliases: [], category: '', site: '', competitors: [], contacts: [] };
+  main(`<h2>2. 建项目</h2><p class="lead">填品牌信息，按固定问法生成 15 个问题。之后每一轮都问同样的问题，前后才能比。</p>
+  ${ps.length > 1 ? `<div class="card"><h3>已有项目</h3><div class="row">${ps.map((x) => `<button class="sm ${x.id === p.id ? '' : 'ghost'}" onclick="pick('${x.id}')">${esc(x.brand)}</button>`).join('')}<button class="sm ghost" onclick="S.project=null;s2new()">+ 新项目</button></div></div>` : ''}
+  <div class="card"><h3>品牌信息</h3><div class="grid2">
+    <label class="field">品牌名<input id="f_brand" value="${esc(p.brand)}"></label>
+    <label class="field">别名（逗号分隔，AI 用这些名字提到你也算。别填会和别的公司撞的短名）<input id="f_aliases" value="${esc(p.aliases.join('，'))}"></label>
+    <label class="field">品类词（会生成「xx推荐？」这类问题，本地生意带上城市名）<input id="f_category" value="${esc(p.category)}"></label>
+    <label class="field">官网域名<input id="f_site" value="${esc(p.site)}"></label>
+    <label class="field">竞品（逗号分隔）<input id="f_competitors" value="${esc(p.competitors.join('，'))}"></label>
+    <label class="field">正确的联系方式（电话、官网，逗号分隔；回答里出现任意一个算给对）<input id="f_contacts" value="${esc(p.contacts.join('，'))}"></label>
+  </div><div class="row" style="margin-top:10px"><button class="sm ghost" onclick="genQ()">按模板生成问题</button></div></div>
+  <div class="card"><h3>问题清单 <span class="small mute">可以直接改，一行一个</span></h3><div class="grid3">
+    ${['品类推荐', '品牌情绪', '联系方式'].map((k) => `<label class="field">${k}<textarea id="q_${k}" style="min-height:150px">${esc((p.questions?.[k] || []).join('\n'))}</textarea></label>`).join('')}
+  </div></div>
+  <div class="row"><span class="spacer"></span><button onclick="saveP()">保存项目，下一步：跑数</button></div>`);
+}
+function s2new() { S.project = null; s2(); }
+async function pick(id) { const ps = await api('GET', '/api/projects'); S.project = ps.find((x) => x.id === id); S.runId = null; s2(); }
+const list = (id) => $('#' + id).value.split(/[,，、\n]/).map((s) => s.trim()).filter(Boolean);
+function form() { return { brand: $('#f_brand').value.trim(), aliases: list('f_aliases'), category: $('#f_category').value.trim(), site: $('#f_site').value.trim(), competitors: list('f_competitors'), contacts: list('f_contacts') }; }
+async function genQ() { const q = await api('POST', '/api/template', form()); for (const k in q) $('#q_' + k).value = q[k].join('\n'); }
+async function saveP() {
+  const f = form(); if (!f.brand || !f.category) return alert('品牌名和品类词必须填');
+  const questions = Object.fromEntries(['品类推荐', '品牌情绪', '联系方式'].map((k) => [k, $('#q_' + k).value.split('\n').map((s) => s.trim()).filter(Boolean)]));
+  S.project = await api('POST', '/api/projects', { ...(S.project || {}), ...f, questions }); go(3);
+}
+
+/* 3 跑数 */
+async function s3() {
+  if (!S.project) return main('<div class="hint">先在第 2 步建项目。</div>');
+  S.cfg = await api('GET', '/api/config');
+  const runs = await api('GET', '/api/runs?project=' + S.project.id);
+  const nq = Object.values(S.project.questions).flat().length;
+  main(`<h2>3. 跑数</h2><p class="lead">每个问题在每个平台问 N 次，每次都是新对话。同一个问题每次答得不一样，所以要多问几次取比例。</p>
+  <div class="card"><h3>本轮设置 · ${esc(S.project.brand)}</h3>
+    <div class="row">${Object.entries(S.cfg).map(([id, p]) => `<label class="row small"><input type="checkbox" id="c_${id}" style="width:auto" ${p.status?.ok ? 'checked' : 'disabled'}> ${p.name}${p.status?.ok ? '' : '（未连通）'}</label>`).join('')}
+    <span class="spacer"></span><label class="row small">每问 <input id="times" type="number" min="1" max="50" value="10" style="width:70px" oninput="est()"> 次</label><button id="startBtn" onclick="run()">开始跑</button></div>
+    <div class="small mute" id="est" style="margin-top:6px"></div></div>
+  <div id="live"></div>
+  <div class="card"><h3>历史轮次</h3>${runs.length ? `<table><tr><th>开始时间</th><th>平台</th><th>每问次数</th><th>成功 / 失败</th><th></th></tr>${runs.map((r) => `<tr><td>${new Date(r.startedAt).toLocaleString()}</td><td>${r.providers.map((x) => S.cfg[x]?.name || x).join('、')}</td><td>${r.times}</td><td>${r.live ? `${r.live.ok} / ${r.live.failed}${r.live.status === 'running' ? ` · 进行中 ${r.live.done}/${r.live.total} <button class="sm ghost" onclick="stopRun('${r.id}')">停止</button>` : r.live.status === 'stopped' ? ' · 已停止' : ''}` : r.finishedAt ? `${r.ok} / ${r.failed}${r.stopped ? ' · 已停止' : ''}` : '中断'}</td><td><button class="sm ghost" onclick="S.runId='${r.id}';go(4)">看诊断</button></td></tr>`).join('')}</table>` : '<div class="small mute">还没跑过。</div>'}</div>`);
+  window.est = () => { const n = Object.keys(S.cfg).filter((id) => $('#c_' + id)?.checked).length; const t = +$('#times').value || 0; $('#est').textContent = `${nq} 个问题 × ${t} 次 × ${n} 个平台 = ${nq * t * n} 条回答。用的是你自己的 Key，按各平台计费。`; };
+  est();
+  const live = runs.find((r) => r.live?.status === 'running'); if (live) watch(live.id);
+}
+async function stopRun(id) { if (!confirm('停止这一轮？已经跑完的结果会保留，诊断照样能看。')) return; await api('POST', '/api/run/stop', { id }); setTimeout(s3, 1500); }
+async function run() {
+  const providers = Object.keys(S.cfg).filter((id) => $('#c_' + id)?.checked);
+  if (!providers.length) return alert('至少选一个已连通的平台');
+  if (S.starting) return;
+  const runs = await api('GET', '/api/runs?project=' + S.project.id);
+  const busyRuns = runs.filter((r) => r.live?.status === 'running');
+  const n = Object.values(S.project.questions).flat().length * (+$('#times').value || 0) * providers.length;
+  if (!confirm(`${busyRuns.length ? `现在已经有 ${busyRuns.length} 轮在跑，再开一轮会同时扣费。\n\n` : ''}确定开始跑 ${n} 条回答吗？会用你的 Key 按调用次数扣费。`)) return;
+  S.starting = true; const btn = $('#startBtn'); if (btn) { btn.disabled = true; btn.textContent = '已开始'; }
+  const r = await api('POST', '/api/runs', { project: S.project.id, providers, times: +$('#times').value });
+  S.runId = r.id; S.starting = false; s3();
+}
+function watch(id) {
+  clearInterval(S.poll);
+  const tick = async () => {
+    const d = await api('GET', `/api/run?project=${S.project.id}&id=${id}`);
+    const l = d.live; if (!l) return;
+    $('#live').innerHTML = `<div class="card"><h3>跑数中 ${l.status === 'done' ? '<span class="chip ok">完成</span>' : ''}</h3><div class="prog"><div style="width:${l.done / l.total * 100}%"></div></div>
+      <div class="small">${l.done} / ${l.total} · 成功 ${l.ok} · 失败 ${l.failed}</div>
+      ${Object.keys(l.errors).length ? `<div class="hint" style="margin:8px 0 0">${Object.entries(l.errors).map(([e, n]) => `${esc(e)} × ${n}`).join('<br>')}</div>` : ''}
+      ${l.status === 'done' ? `<div class="row" style="margin-top:8px"><span class="spacer"></span><button onclick="S.runId='${id}';go(4)">下一步：看诊断</button></div>` : ''}</div>`;
+    if (l.status !== 'running') clearInterval(S.poll);
+  };
+  tick(); S.poll = setInterval(tick, 2000);
+}
+
+/* 4 诊断 */
+async function s4() {
+  if (!S.project) return main('<div class="hint">先在第 2 步建项目。</div>');
+  if (!S.runId) { const runs = await api('GET', '/api/runs?project=' + S.project.id); S.runId = runs[0]?.id; }
+  if (!S.runId) return main('<div class="hint">先在第 3 步跑一轮。</div>');
+  const { report, live } = await api('GET', `/api/run?project=${S.project.id}&id=${S.runId}`);
+  const cfg = await api('GET', '/api/config');
+  const P = Object.entries(report.providers);
+  main(`<h2>4. 诊断</h2><p class="lead">先看这个词要不要做，再看两个 AI 各自引用最多的平台。表里排在前面的平台，就是要去发稿的地方。</p>
+  ${live?.status === 'running' ? '<div class="hint">这一轮还在跑，下面是已经回来的部分。</div>' : ''}
+  <div class="small mute" style="margin-bottom:10px">本轮 ${report.totals.all} 条，成功 ${report.totals.ok}，失败 ${report.totals.failed}</div>
+  ${P.map(([pid, r]) => { const nm = cfg[pid]?.name || pid; if (!r.category.n) return `<div class="card"><h3>${nm} <span class="chip neg">没有数据</span></h3><div class="small">这一轮${nm}的品类问题一条都没跑成功，回第 3 步看报错（常见：欠费、没开通联网、Key 填错）。</div></div>`; return `
+  <div class="card"><h3>${nm} · 「${esc(S.project.category)}」要不要做 <span class="chip ${r.verdict === '可以做' ? 'ok' : 'warn'}">${r.verdict}</span></h3>
+    <table><tr><th>检查项</th><th>数据</th><th>结果</th></tr>${r.lights.map((l) => `<tr><td>${l.name}</td><td>${esc(l.detail)}</td><td>${l.red ? '<span class="chip warn">亮红灯</span>' : '<span class="chip ok">没问题</span>'}</td></tr>`).join('')}</table>
+    <div class="small mute" style="margin-top:6px">亮红灯怎么办：头部占满、你是 0 → 先换一个更细的词；已经 ≥50% → 这个词不用做，每月看一次就行。</div></div>
+  <div class="kpis">
+    <div class="kpi"><div class="l">${nm} · 品类提及率</div><div class="v">${pct(r.category.rate)}</div><div class="h">${r.category.n} 条里 ${r.category.hit} 条提到你 · 误差 ${pct(r.category.ci[0])}~${pct(r.category.ci[1])}</div></div>
+    <div class="kpi"><div class="l">AI 给了错误电话</div><div class="v" style="${r.contact.wrongPhones.length ? 'color:var(--neg)' : ''}">${r.contact.wrongPhones.length ? r.contact.wrongPhones.reduce((a, w) => a + w.n, 0) + ' 次' : '没有'}</div><div class="h">${r.contact.wrongPhones.length ? r.contact.wrongPhones.slice(0, 3).map((w) => esc(w.phone)).join('、') : '品牌和联系方式回答里'}</div></div>
+    <div class="kpi"><div class="l">联系方式给对</div><div class="v">${pct(r.contact.rate)}</div><div class="h">${r.contact.n} 条联系方式回答</div></div>
+    <div class="kpi"><div class="l">信源</div><div class="v">${r.sourceTotal}</div><div class="h">${r.citedOnly ? '品类回答正文里真正引用的' : '品类回答搜到的（这个平台不标引用）'}</div></div></div>
+  <div class="grid2">
+    <div class="card"><h3>${nm} · 品类回答里谁被推荐了</h3>${[...r.category.comps.map((c) => [c.name, c.rate, 0]), [S.project.brand, r.category.rate, 1]].sort((a, b) => b[1] - a[1]).map(([n, v, me]) => `<div class="bar"><span>${esc(n)}${me ? ' <span class="chip ok">你</span>' : ''}</span><span class="tr"><span class="f ${me ? '' : 'mute'}" style="display:block;width:${v * 100}%"></span></span><span class="p">${pct(v)}</span></div>`).join('')}</div>
+    <div class="card"><h3>${nm} · 引用的信源 <span class="small mute">共 ${r.sourceTotal} 条</span></h3>${r.sources.slice(0, 12).map((s) => `<div class="bar" title="${esc(s.top.map((t) => t.url).join('\n'))}"><span>${esc(s.name)} <span class="small mute">${esc(s.kind)}</span></span><span class="tr"><span class="f" style="display:block;width:${s.pct * 100}%"></span></span><span class="p">${pct(s.pct)}</span></div>`).join('')}</div>
+  </div>
+  ${r.recommended.length ? `<div class="card"><h3>${nm} · AI 实际推荐了这些名字 <span class="small mute">自动粗提取，里面可能混了非机构名。挑出真正的竞品，回第 2 步加进竞品栏再看一遍诊断</span></h3><div class="row">${r.recommended.map((c) => `<span class="chip gray">${esc(c.name)} · ${c.n} 次</span>`).join('')}</div></div>` : ''}
+  <div class="card"><h3>${nm} · 被引用最多的具体文章</h3><div class="tbl"><table><tr><th>平台</th><th>文章</th><th>次数</th></tr>${r.sources.flatMap((s) => s.top.map((t) => [s.name, t])).sort((a, b) => b[1].n - a[1].n).slice(0, 12).map(([n, t]) => `<tr><td>${esc(n)}</td><td><a href="${esc(t.url)}" target="_blank" rel="noopener">${esc(t.url.slice(0, 80))}</a></td><td>${t.n}</td></tr>`).join('')}</table></div></div>`; }).join('')}
+  <div class="card"><h3>回答原文 <span class="small mute">抽查用，品牌名标亮</span></h3><div class="row">${P.map(([pid]) => ['品类推荐', '品牌情绪', '联系方式'].map((k) => `<button class="sm ghost" onclick="ans('${pid}','${k}')">${cfg[pid]?.name} · ${k}</button>`).join('')).join('')}</div><div id="ans"></div></div>`);
+}
+async function ans(pid, intent) {
+  const rs = await api('GET', `/api/answers?project=${S.project.id}&id=${S.runId}&provider=${pid}&intent=${encodeURIComponent(intent)}`);
+  const names = [S.project.brand, ...S.project.aliases, ...S.project.competitors].filter(Boolean).sort((a, b) => b.length - a.length);
+  const hl = (t) => names.reduce((s, n) => s.split(esc(n)).join(`<mark>${esc(n)}</mark>`), esc(t));
+  $('#ans').innerHTML = rs.slice(0, 20).map((r) => `<div class="ans"><b>${esc(r.q)}</b>（第 ${r.k + 1} 次）\n${r.ok ? hl(r.text.slice(0, 1500)) : '失败：' + esc(r.error)}${r.ok && r.sources?.length ? `\n<span class="small mute">引用：${r.sources.filter((s) => s.cited).map((s) => esc(s.site && s.site !== '无' ? s.site : new URL(s.url).hostname)).join(' · ') || '无'}</span>` : ''}</div>`).join('');
+}
+/* 5 写稿 */
+const provOpts = () => Object.entries(S.cfg).filter(([, p]) => p.status?.ok).map(([id, p]) => `<option value="${id}">${p.name}</option>`).join('');
+async function s5() {
+  if (!S.project) return main('<div class="hint">先在第 2 步建项目。</div>');
+  S.cfg = await api('GET', '/api/config');
+  const w = await api('GET', '/api/writing?project=' + S.project.id);
+  const sug = await api('GET', '/api/suggest?project=' + S.project.id + (S.runId ? '&run=' + S.runId : ''));
+  const have = new Set(w.drafts.map((d) => d.platform + '|' + d.question));
+  main(`<h2>5. 写稿</h2><p class="lead">先把品牌资料整理成知识库，生成一篇母稿，再按待办一篇篇写子稿。模型、Key、提示词都用你自己的。</p>
+  <div class="card"><h3>待办建议 <span class="small mute">来自第 4 步的诊断：各 AI 引用最多的平台，加上联系方式问题</span></h3>
+    ${sug.items.length ? sug.items.map((it, i) => `<label class="row" style="padding:6px 0;border-bottom:1px solid var(--line);align-items:flex-start"><input type="checkbox" id="sg${i}" style="width:auto;margin-top:4px" ${have.has(it.platform + '|' + it.question) ? 'disabled' : 'checked'}><span style="flex:1"><b>${esc(it.platform)}</b> · 回答「${esc(it.question)}」<br><span class="small mute">${esc(it.why)}</span></span>${have.has(it.platform + '|' + it.question) ? '<span class="chip ok">已加入</span>' : ''}</label>`).join('') : '<div class="small mute">先在第 3 步跑完一轮，才有建议。</div>'}
+    <div class="row" style="margin-top:10px"><button class="sm" onclick="addSug()">把勾选的加入待办</button><button class="sm ghost" onclick="addManual()">+ 自己加一条</button></div>
+    <div class="small mute" style="margin-top:6px">这些平台就是要去发稿的地方。自己没号的平台，就去找能发的渠道；实在找不到，就先发能发的。</div></div>
+  <div class="grid2">
+    <div class="card"><h3>① 品牌资料（知识库）</h3><textarea id="kb" style="min-height:220px" placeholder="品牌名、做什么、适合谁、价格、地址、电话、官网、常见问题……所有稿件只能用这里写过的事实">${esc(w.kb)}</textarea>
+      <div class="row" style="margin-top:8px"><button class="sm ghost" onclick="saveW()">保存</button></div></div>
+    <div class="card"><h3>② 母稿 ${w.master ? '<span class="chip ok">已生成</span>' : ''}</h3>
+      ${w.master ? `<div class="ans" style="max-height:220px">${esc(w.master.text)}</div>` : '<div class="small mute">品牌资料填好后生成。母稿是一篇完整介绍，后面的子稿都从它拆出去。</div>'}
+      <div class="row" style="margin-top:8px"><select id="mp" style="width:auto">${provOpts()}</select><button class="sm" onclick="genMaster(this)">${w.master ? '重新生成母稿' : '生成母稿'}</button></div></div>
+  </div>
+  <div class="card"><h3>写稿提示词 <span class="small mute">示范版，可以整段改。{平台}{问题}{知识库}{母稿} 会自动替换</span></h3>
+    <textarea id="pr" style="min-height:200px">${esc(w.prompt)}</textarea>
+    <div class="row" style="margin-top:8px"><button class="sm ghost" onclick="saveW()">保存</button><button class="sm ghost" onclick="$('#pr').value=${esc(JSON.stringify(w.defaultPrompt))};saveW()">恢复示范版</button></div></div>
+  <div class="card"><h3>③ 子稿 <span class="chip gray">${w.drafts.filter((d) => d.text).length} / ${w.drafts.length}</span><span class="spacer"></span><select id="dp" style="width:auto">${provOpts()}</select><button class="sm" onclick="genAll(this)">生成所有还没写的</button></h3>
+    ${w.drafts.length ? w.drafts.map((d) => `<div class="card" style="background:var(--panel2)"><div class="row"><b>${esc(d.platform)}</b><span>回答「${esc(d.question)}」</span><span class="spacer"></span>${d.text ? '<span class="chip ok">已写</span>' : '<span class="chip gray">未写</span>'}<button class="sm ghost" onclick="genOne('${d.id}',this)">${d.text ? '重写' : '生成'}</button><button class="sm ghost" onclick="delD('${d.id}')">删除</button></div>
+      ${d.why ? `<div class="small mute">${esc(d.why)}</div>` : ''}
+      ${d.text ? `<label class="field" style="margin-top:8px">标题<input id="t_${d.id}" value="${esc(d.title)}"></label><label class="field" style="margin-top:6px">正文（可以直接改，改完点保存）<textarea id="x_${d.id}" style="min-height:200px">${esc(d.text)}</textarea></label><div class="row" style="margin-top:6px"><button class="sm ghost" onclick="saveD('${d.id}')">保存修改</button><button class="sm ghost" onclick="navigator.clipboard.writeText($('#x_${d.id}').value);this.textContent='已复制'">复制正文</button></div>` : ''}</div>`).join('') : '<div class="small mute">上面加了待办，这里就会出现。</div>'}</div>
+  <div class="hint">发之前人工过一遍：事实对照品牌资料、没有「第一」「最好」这类绝对化用语、符合平台规则。AI 写的稿不检查就发，出了错是你的品牌背。</div>
+  <div class="row"><span class="spacer"></span><button onclick="go(6)">下一步：发布</button></div>`);
+  window._sug = sug.items;
+}
+async function addSug() { const items = (window._sug || []).filter((_, i) => $('#sg' + i)?.checked && !$('#sg' + i).disabled); if (!items.length) return; await api('POST', '/api/drafts', { project: S.project.id, items }); s5(); }
+async function addManual() { const platform = prompt('发在哪个平台？比如：知乎、百家号、品牌官网'); if (!platform) return; const question = prompt('这篇要回答哪个问题？', S.project.questions['品类推荐']?.[0] || ''); if (!question) return; await api('POST', '/api/drafts', { project: S.project.id, items: [{ platform, question }] }); s5(); }
+async function saveW() { await api('POST', '/api/writing', { project: S.project.id, kb: $('#kb').value, prompt: $('#pr').value }); }
+const busy = (b, t) => { b.disabled = true; b.textContent = t; };
+async function genMaster(b) { await saveW(); busy(b, '生成中，约 30~60 秒…'); const r = await api('POST', '/api/master', { project: S.project.id, provider: $('#mp').value }); if (r.error) alert(r.error); s5(); }
+async function genOne(id, b) { await saveW(); busy(b, '写稿中…'); const r = await api('POST', '/api/draft/gen', { project: S.project.id, id, provider: $('#dp').value }); if (r.error) alert(r.error); s5(); }
+async function genAll(b) { await saveW(); const w = await api('GET', '/api/writing?project=' + S.project.id); const todo = w.drafts.filter((d) => !d.text); if (!todo.length) return; let i = 0; for (const d of todo) { busy(b, `写稿中 ${++i}/${todo.length}…`); const r = await api('POST', '/api/draft/gen', { project: S.project.id, id: d.id, provider: $('#dp').value }); if (r.error) { alert(r.error); break; } } s5(); }
+async function saveD(id) { await api('POST', '/api/draft/update', { project: S.project.id, id, title: $('#t_' + id).value, text: $('#x_' + id).value }); s5(); }
+async function delD(id) { if (!confirm('删除这篇？')) return; await api('POST', '/api/draft/delete', { project: S.project.id, id }); s5(); }
+
+/* 6 发布 */
+async function s6() {
+  if (!S.project) return main('<div class="hint">先在第 2 步建项目。</div>');
+  const w = await api('GET', '/api/writing?project=' + S.project.id);
+  const ds = w.drafts.filter((d) => d.text);
+  main(`<h2>6. 发布</h2><p class="lead">把稿子发到对应平台（自己的号、官网，或者找渠道发），发完把文章链接贴回来。第 3 天左右查一次收录：搜得到，AI 才可能引用。</p>
+  <div class="hint">这一版先手动发：复制正文去平台发。一键推到草稿箱下一版做。同一篇稿别在同一个平台用多个号原样发，容易被判搬运。</div>
+  ${ds.length ? `<div class="card"><div class="tbl"><table><tr><th>平台</th><th>稿件</th><th style="min-width:260px">发布链接</th><th>收录（第 3 天查）</th></tr>
+  ${ds.map((d) => `<tr><td><b>${esc(d.platform)}</b></td><td>${esc(d.title || d.question)}<br><button class="sm ghost" style="margin-top:4px" onclick="navigator.clipboard.writeText(${esc(JSON.stringify(d.title + '\n\n' + d.text.split('\n').slice(1).join('\n').trim()))});this.textContent='已复制'">复制全文</button></td>
+    <td><input id="u_${d.id}" value="${esc(d.url)}" placeholder="发完贴文章链接"><button class="sm" style="margin-top:4px" onclick="saveU('${d.id}')">保存链接</button>${d.publishedAt ? `<div class="small mute">登记于 ${new Date(d.publishedAt).toLocaleDateString()}</div>` : ''}</td>
+    <td>${d.url ? `<a class="small" target="_blank" rel="noopener" href="https://www.baidu.com/s?wd=${encodeURIComponent(d.title || d.question)}">去百度搜标题</a><div class="row" style="margin-top:4px"><button class="sm ${d.indexed === true ? '' : 'ghost'}" onclick="idx('${d.id}',true)">搜得到</button><button class="sm ${d.indexed === false ? '' : 'ghost'}" onclick="idx('${d.id}',false)">搜不到</button></div>${d.indexed === false ? '<div class="small" style="color:var(--warn)">先看是不是被限流或还在审核；第 7 天还搜不到，就换平台重发</div>' : ''}` : '<span class="small mute">先登记链接</span>'}</td></tr>`).join('')}</table></div></div>` : '<div class="hint">第 5 步还没写好稿。</div>'}
+  <div class="row"><span class="spacer"></span><button onclick="go(7)">下一步：回查</button></div>`);
+}
+async function saveU(id) { await api('POST', '/api/draft/update', { project: S.project.id, id, url: $('#u_' + id).value.trim() }); s6(); }
+async function idx(id, v) { await api('POST', '/api/draft/update', { project: S.project.id, id, indexed: v }); s6(); }
+
+/* 7 回查 */
+async function s7(base, cur) {
+  if (!S.project) return main('<div class="hint">先在第 2 步建项目。</div>');
+  const cfg = await api('GET', '/api/config');
+  const c = await api('GET', `/api/compare?project=${S.project.id}${base ? '&base=' + base : ''}${cur ? '&cur=' + cur : ''}`);
+  const nm = (id) => cfg[id]?.name || id;
+  const opt = (sel) => c.runs.map((r) => `<option value="${r.id}" ${r.id === sel ? 'selected' : ''}>${new Date(r.startedAt).toLocaleString()} · ${r.providers.map(nm).join('/')} · 每问 ${r.times} 次</option>`).join('');
+  const d = (a, b) => a == null || b == null ? '' : `<span style="color:${b >= a ? 'var(--ok)' : 'var(--neg)'}">${b >= a ? '+' : ''}${Math.round((b - a) * 100)} 个点</span>`;
+  const tip = { '已被引用': '—', '未收录': '先解决收录：换平台重发', '已发布未被引用': '收录了但没被引用，多半是写法问题：改成对比表格或问答写法再发', '发布晚于这轮回查': '这篇是在回查那轮之后发的，等下一轮再看', '未发布': '先发出去' };
+  main(`<h2>7. 回查</h2><p class="lead">稿件发出去后 7~14 天，回第 3 步用同样的问题再跑一轮，在这里和基线比。</p>
+  <div class="card"><h3>选两轮来比</h3><div class="grid2"><label class="field">基线（优化前）<select id="rb">${opt(c.base)}</select></label><label class="field">回查（优化后）<select id="rc">${opt(c.cur)}</select></label></div>
+    <div class="row" style="margin-top:8px"><button class="sm" onclick="s7($('#rb').value,$('#rc').value)">对比</button><span class="spacer"></span><button class="sm ghost" onclick="go(3)">去第 3 步再跑一轮</button></div>
+    ${c.base === c.cur ? '<div class="hint" style="margin:8px 0 0">现在只有一轮跑完的数据，基线和回查是同一轮。发稿 7~14 天后再跑一轮，这里才有对比。</div>' : ''}</div>
+  ${c.rows.length ? `<div class="card"><h3>前后对比</h3><div class="tbl"><table><tr><th>平台</th><th>品类提及率</th><th>联系方式给对</th><th>错误电话次数</th></tr>${c.rows.map((r) => `<tr><td>${nm(r.provider)}</td><td>${r.base ? pct(r.base.rate) : '—'} → <b>${pct(r.cur.rate)}</b> ${r.base ? d(r.base.rate, r.cur.rate) : ''}<div class="small mute">${r.base?.n || 0} 条 → ${r.cur.n} 条；样本少时误差大，变化在误差范围内不算数</div></td><td>${r.base ? pct(r.base.contact) : '—'} → <b>${pct(r.cur.contact)}</b> ${r.base ? d(r.base.contact, r.cur.contact) : ''}</td><td>${r.base ? r.base.wrong : '—'} → <b>${r.cur.wrong}</b></td></tr>`).join('')}</table></div></div>` : ''}
+  <div class="card"><h3>每篇稿的去向 <span class="small mute">看回查那一轮里，AI 的引用有没有指向你发的链接</span></h3>
+    ${c.drafts.length ? `<div class="tbl"><table><tr><th>平台</th><th>稿件</th><th>状态</th><th>被谁引用</th><th>下一步</th></tr>${c.drafts.map((x) => `<tr><td>${esc(x.platform)}</td><td>${esc(x.title || x.question)}</td><td><span class="chip ${x.state === '已被引用' ? 'ok' : x.state === '未发布' || x.state === '发布晚于这轮回查' ? 'gray' : 'warn'}">${x.state}</span></td><td>${x.citedBy && Object.keys(x.citedBy).length ? Object.entries(x.citedBy).map(([k, v]) => `${nm(k)} ${v} 次`).join('、') : '—'}</td><td class="small">${tip[x.state]}</td></tr>`).join('')}</table></div>` : '<div class="small mute">还没有稿件。</div>'}</div>
+  <div class="card"><div class="row"><span><b>接下来</b>：按上面的「下一步」调整，回第 5 步写新一批，开第 2 轮。问题保持不变，前后才能比。</span><span class="spacer"></span><button class="sm" onclick="go(5)">开第 2 轮写稿</button></div></div>`);
+}
+function soon() { main(`<h2>${S.step}. ${STEPS[S.step - 1]}</h2><div class="hint">这一步下一版做。演示版里的样子见 demo。</div>`); }
+go(1);
+</script>
+</body></html>
